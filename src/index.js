@@ -23,15 +23,15 @@ bodyJs.prepend(divForForm)
 divForForm.appendChild(form)
 
  
-let keyWord = ""; 
- async function getArrOfPhotos(keyWord) { 
+async function getArrOfPhotos(keyWord) { 
     try { 
       const response = await axios.get(`${baseUrl}?key=38602994-963aa75bc12682ba48659a817&q=${keyWord}&image_type=photo&orientation=horizontal&safesearch=true&page=${pageCount}&per_page=${perPageCount}`); 
       const arrOfPhotos = response.data.hits;  
        if(arrOfPhotos.length === 0){
         Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
-           gallery.innerHTML = " ";
-           loadMoreBtn.style.display = "none";
+        gallery.innerHTML =" ";
+        loadMoreBtn.style.display = "none"
+        return;
        } else 
       {//console.log(response); 
       //console.log(arrOfPhotos); 
@@ -40,13 +40,16 @@ return arrOfPhotos;
     } catch (error) { 
       Notiflix.Notify.failure("Error"); 
     } 
-  } 
+  }
+
  
  
  
   function renderPhotos(arrOfPhotos) { 
     let photoPageLi = "";  
-   
+    if (arrOfPhotos === undefined) {
+      return; 
+   }else{
     arrOfPhotos.forEach(photo => { 
       const onePhoto = `<li class="gallery__item"> 
         <a class="gallery__link" href="${photo.largeImageURL}"  onclick="return false"> 
@@ -81,7 +84,7 @@ return arrOfPhotos;
     const photoPage = "<ul>" + photoPageLi + "</ul>"; 
     return photoPage; 
   } 
-   
+   }
   const lightbox = new SimpleLightbox('.gallery a') 
    
   searchBtn.addEventListener("click", findPhoto) 
@@ -90,15 +93,18 @@ return arrOfPhotos;
     e.preventDefault(); 
      keyWord = inputJs.value; 
      //console.log(keyWord) 
-    
+     pageCount = 1;
       getArrOfPhotos(keyWord) 
       .then(arrOfPhotos => renderPhotos (arrOfPhotos)) 
-          .then(photoPage => {
-              gallery.innerHTML = photoPage ;
+          .then(photoPage => { if (photoPage === undefined){
+            gallery.innerHTML = ""
+          } else 
+             { gallery.innerHTML = photoPage ;
               const lightbox = new SimpleLightbox('.gallery a') 
               loadMoreBtn.style.display = "block";
                
-          }).finally(inputJs.value = "")}
+          }}).catch( gallery.innerHTML = ""
+          ).finally(inputJs.value = "")}
   loadMoreBtn.addEventListener("click", getMorePhotos)
 
   function getMorePhotos (e){
