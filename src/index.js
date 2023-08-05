@@ -15,7 +15,7 @@ const form = document.querySelector(".search-form");
 
 let pageCount = 1;
 let perPageCount = 40;
-
+let keyWord = "";
 const divForForm = document.createElement("div")
 divForForm.className = "forForm";
 
